@@ -1,0 +1,139 @@
+#include <iostream>
+#include <vector>
+#include <list>
+#include <string>
+using namespace std;
+
+const int  TABLE_SIZE = 10;
+
+struct Client
+{
+    string name;
+    string phone;
+};
+
+int hashfunction(string phone)
+{
+    int sum = 0;
+    for(char ch : phone )
+    {
+        sum +=ch;
+    }
+    return sum%TABLE_SIZE;
+}
+
+class LinerProbing
+{
+    vector<Client>table;
+    vector<bool>occupied;
+public:
+    LinerProbing()
+    {
+        table.resize(TABLE_SIZE);
+        occupied.resize(TABLE_SIZE,false);
+    }
+    void insert(Client client)
+    {
+        int index = hashfunction(client.phone);
+        int startindex= index;
+        while(occupied[index])
+        {
+            index= (index+1)%TABLE_SIZE;
+            if(index==startindex)
+            {
+                cout<<"Table is full"<<endl;
+                return;
+            }
+        }
+        table[index] = client;
+        occupied[index]=true;
+    
+    }
+    int search(string phone)
+    {   
+        int index= hashfunction(phone);
+        int startindex= index;
+        int comparisons = 0;
+        while(occupied[index])
+        {
+            comparisons++;
+            if (table[index].phone==phone)
+            {
+                return comparisons;
+
+            }
+            index=(index+1)%TABLE_SIZE;
+            if(index==startindex)
+
+            {
+                break;
+            }
+        }
+        return comparisons;
+    }
+};
+
+class Chaining
+{
+    vector<list<Client>>table;
+    public:
+    Chaining()
+    {
+        table.resize(TABLE_SIZE);
+
+    }
+    void insert(Client client)
+    {
+        int index = hashfunction(client.phone);
+        table[index].push_back(client);
+
+    }
+    int search(string phone)
+    {
+        int index=hashfunction(phone);
+        int comparisons = 0;
+        for (Client client : table[index])
+        {
+            comparisons++;
+            if(client.phone==phone)
+            {
+                return comparisons;
+            }
+        }
+    }
+};
+
+int main()
+{
+    int n;
+    cout<<"Enter number of clients"<<endl;
+    cin>>n;
+    LinerProbing lp;
+    Chaining c;
+    for (int i=0;i<n;i++)
+{
+    Client client;
+    cout<<"Client "<<i+1<<"Name: ";
+    cin>> client.name;
+    cout<<"Client"<<i+1<<"Phone: ";
+    cin>>client.phone;
+    lp.insert(client);
+    c.insert(client);
+
+}
+int searchCount;
+cout<<"\nHow many phone numbers you want to search: ";
+cin>>searchCount;
+for (int i=0;i<searchCount;++i)
+{
+    string phone;
+    cout<<"Enter phone number to search" ;
+    cin>>phone;
+    int lpComparisons = lp.search(phone);
+    int cComparisons = c.search(phone);
+    cout<<"Liner Probing Comparisons: "<<lpComparisons<<endl;
+    cout<<"Chaining Comparisons: "<<cComparisons<<endl;
+}
+return 0;
+}
+
