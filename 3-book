@@ -1,0 +1,96 @@
+/*A book consists of chapters, chapters consist of sections and sections consist of subsections. 
+Construct a tree and print the nodes. Find the time and
+space requirements of your method.*/
+/*cout << "\nTime Complexity: O(total number of nodes)" << endl;
+cout << "Space Complexity: O(total number of nodes + total name size)" << endl;
+*/
+
+#include <iostream> 
+#include <vector> 
+#include <string> 
+using namespace std; 
+
+class TreeNode 
+{ 
+public: 
+string name; 
+vector<TreeNode*> children;   
+
+TreeNode(const string& name) 
+{ 
+this->name = name; 
+} 
+
+void addChild(TreeNode* child) 
+{ 
+children.push_back(child); 
+} 
+
+void printTree(int level = 0) 
+{ 
+// Indentation based on the tree depth 
+for (int i = 0; i < level; i++) 
+{ 
+cout << "  "; 
+} 
+cout << name << endl; 
+
+for (auto child : children) 
+{ 
+child->printTree(level + 1); 
+} 
+} 
+}; 
+
+int main() 
+{ 
+string bookName; 
+cout << "Enter the name of the book: "; 
+getline(cin, bookName); 
+TreeNode* book = new TreeNode(bookName); 
+
+int numChapters; 
+cout << "Enter the number of chapters: "; 
+cin >> numChapters; 
+cin.ignore(); 
+for (int i = 1; i <= numChapters; i++) 
+{ 
+string chapterName; 
+cout << "Enter the name of Chapter " << i << ": "; 
+cin.ignore();  // To ignore the leftover newline character 
+getline(cin, chapterName); 
+TreeNode* chapter = new TreeNode(chapterName); 
+book->addChild(chapter); 
+
+int numSections; 
+cout << "Enter the number of sections for " << chapterName << ": "; 
+cin >> numSections; 
+cin.ignore(); 
+for (int j = 1; j <= numSections; j++) 
+{ 
+string sectionName; 
+cout << "Enter the name of Section " << i << "." << j << ": "; 
+getline(cin, sectionName); 
+TreeNode* section = new TreeNode(sectionName); 
+chapter->addChild(section); 
+
+int numSubsections; 
+cout << "Enter the number of subsections for " << sectionName << ": "; 
+cin >> numSubsections; 
+cin.ignore(); 
+for (int k = 1; k <= numSubsections; k++) 
+{ 
+string subsectionName; 
+cout << "Enter the name of Subsection " << i << "." << j << "." << k << ": "; 
+getline(cin, subsectionName); 
+TreeNode* subsection = new TreeNode(subsectionName); 
+section->addChild(subsection); 
+} 
+} 
+} 
+
+cout << "\nThe structure of the book is:" << endl; 
+book->printTree(); 
+delete book; 
+return 0; 
+}
